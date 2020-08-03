@@ -36,13 +36,14 @@ class Client
      * @param string $sourceID
      * @param string $writeKey
      * @param QueueBuffer|null $buffer
-     * @param HttpClient|null $httpClient
      * @param string|null $host
+     * @param HttpClient|null $httpClient
      */
     public function __construct(string $sourceID, string $writeKey,
                                 QueueBuffer $buffer = null,
-                                HttpClient $httpClient = null,
-                                string $host = null)
+                                string $host = null,
+                                HttpClient $httpClient = null
+    )
     {
         $this->sourceID = $sourceID;
         $this->writeKey = $writeKey;

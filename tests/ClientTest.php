@@ -129,7 +129,7 @@ class ClientTest extends TestCase
         $handlerStack = HandlerStack::create($mock);
         $handlerStack->push($history);
 
-        $client = new Client('s-1', 'w-1', null, new HttpClient(['handler' => $handlerStack]));
+        $client = new Client('s-1', 'w-1', null, null, new HttpClient(['handler' => $handlerStack]));
         $client->track('access_report', ['in' => 'the morning'],
             Event::withSessionID("s-id"),
             Event::withSource(new Source("site", "primedata.ai", array("price" => 20))),

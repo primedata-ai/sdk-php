@@ -30,3 +30,6 @@ jobs:
       if: steps.composer-cache.outputs.cache-hit != 'true'
       run: composer install --prefer-dist --no-progress --no-suggest
     - uses: php-actions/phpunit@v1
+      with:
+        config: phpunit.xml
+        memory: 256M

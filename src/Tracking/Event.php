@@ -4,17 +4,20 @@ declare(strict_types=1);
 
 namespace Prime\Tracking;
 
+use Carbon\Carbon;
+
 /**
  * Class Event
  * @package Prime\Tracking
  */
 class Event extends Payload
 {
-    private $eventName = "";
+    public $eventName = "";
     private $sessionId = "";
     public $source;
     public $target;
     private $scope;
+    private $timeStamp;
 
     public static function withTarget(Target $target)
     {
@@ -51,6 +54,7 @@ class Event extends Payload
         if (count($properties) > 0) {
             $this->properties = $properties;
         }
+        $this->timeStamp = Carbon::now();
     }
 
     /**
@@ -67,9 +71,10 @@ class Event extends Payload
                 'scope'      => $this->scope,
                 'eventType'  => $this->eventName,
                 'itemType'   => 'event',
+                'timeStamp'  => $this->timeStamp->toIso8601String(),
                 'properties' => $this->properties,
-                'target'     => $this->target == null ? [] : $this->target->jsonSerialize(),
-                'source'     => $this->source == null ? [] : $this->source->jsonSerialize(),
+                'target'     => $this->target == null ? null : $this->target->jsonSerialize(),
+                'source'     => $this->source == null ? null : $this->source->jsonSerialize(),
             ]
         ];
 

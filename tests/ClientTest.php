@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Carbon\Carbon;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
@@ -17,27 +18,16 @@ use Prime\Tracking\Target;
 
 class ClientTest extends TestCase
 {
-    const AssertPayload = ['sessionId' => 's-id', 'events' => [
-        [
-            'scope'      => 's-1',
-            'eventType'  => 'access_report',
-            'itemType'   => 'event',
-            'target'     => [
-                'itemType'   => 'report',
-                'itemId'     => 'CDP solution',
-                'properties' => [
-                    'pages' => 100
-                ]
-            ],
-            'source'     => [
-                'scope'      => 's-1',
-                'itemType'   => 'site',
-                'itemId'     => 'primedata.ai',
-                'properties' => ['price' => 20]
-            ],
-            'properties' => ['in' => 'the morning'],
-        ]
-    ]];
+    /**
+     * @var Carbon|false
+     */
+    private $now;
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->now = Carbon::now();
+    }
 
     protected function tearDown(): void
     {
@@ -55,13 +45,14 @@ class ClientTest extends TestCase
                         'scope'      => 's-1',
                         'eventType'  => 'sync-user',
                         'itemType'   => 'event',
+                        'timeStamp'  => $this->now->toIso8601String(),
                         'source'     => [
                             'scope'    => 's-1',
                             'itemType' => 's2s',
                             'itemId'   => 's-1',
                         ],
                         'properties' => ['device' => 'Macbook Pro', 'user_id' => 'paul-id'],
-                        'target'     => [],
+                        'target'     => null,
                     ]
                 ]], $msg->jsonSerialize());
             return true;
@@ -74,7 +65,31 @@ class ClientTest extends TestCase
     {
         $buffer = Mockery::mock(QueueBuffer::class);
         $buffer->shouldReceive('sendMessage')->with('primedata-events', Mockery::on(function (Event $msg) {
-            self::assertEquals(self::AssertPayload, $msg->jsonSerialize());
+            self::assertEquals([
+                'sessionId' => 's-id',
+                'events'    => [
+                    [
+                        'scope'      => 's-1',
+                        'eventType'  => 'access_report',
+                        'itemType'   => 'event',
+                        'timeStamp'  => $this->now->toIso8601String(),
+                        'target'     => [
+                            'itemType'   => 'report',
+                            'itemId'     => 'CDP solution',
+                            'properties' => [
+                                'pages' => 100
+                            ]
+                        ],
+                        'source'     => [
+                            'scope'      => 's-1',
+                            'itemType'   => 'site',
+                            'itemId'     => 'primedata.ai',
+                            'properties' => ['price' => 20]
+                        ],
+                        'properties' => ['in' => 'the morning'],
+                    ]
+                ]
+            ], $msg->jsonSerialize());
             return true;
         }));
         $client = new Client('s-1', 'w-1', $buffer);
@@ -95,6 +110,7 @@ class ClientTest extends TestCase
                     'scope'      => 's-1',
                     'eventType'  => 'access_report',
                     'itemType'   => 'event',
+                    'timeStamp'  => $this->now->toIso8601String(),
                     'target'     => [
                         'itemType'   => 'report',
                         'itemId'     => 'CDP solution',
@@ -137,7 +153,32 @@ class ClientTest extends TestCase
         );
         $this->assertCount(1, $container);
         $request = $container[0]['request']; # GuzzleHttp\Psr7\Request
-        $this->assertEquals(self::AssertPayload, json_decode((string)$request->getBody(), JSON_OBJECT_AS_ARRAY));
+        $this->assertEquals([
+            'sessionId' => 's-id',
+            'sendAt'    => $this->now->toIso8601String(),
+            'events'    => [
+                [
+                    'scope'      => 's-1',
+                    'eventType'  => 'access_report',
+                    'itemType'   => 'event',
+                    'timeStamp'  => $this->now->toIso8601String(),
+                    'target'     => [
+                        'itemType'   => 'report',
+                        'itemId'     => 'CDP solution',
+                        'properties' => [
+                            'pages' => 100
+                        ]
+                    ],
+                    'source'     => [
+                        'scope'      => 's-1',
+                        'itemType'   => 'site',
+                        'itemId'     => 'primedata.ai',
+                        'properties' => ['price' => 20]
+                    ],
+                    'properties' => ['in' => 'the morning'],
+                ]
+            ]
+        ], json_decode((string)$request->getBody(), JSON_OBJECT_AS_ARRAY));
         $this->assertEquals(['s-1'], $request->getHeader('X-Client-Id'));
         $this->assertEquals(['w-1'], $request->getHeader('X-Client-Access-Token'));
     }

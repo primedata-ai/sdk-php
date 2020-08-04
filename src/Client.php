@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Prime;
 
 
+use Carbon\Carbon;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
 use Prime\Tracking\Event;
@@ -31,6 +32,9 @@ class Client
      */
     private $httpClient;
 
+    const EventEndpoint = "/smile";
+    const ContextEndpoint = "/context";
+
     /**
      * Client constructor.
      * @param string $sourceID
@@ -49,7 +53,7 @@ class Client
         $this->writeKey = $writeKey;
         $this->buffer = $buffer;
         if ($host == null or $host == "") {
-            $host = 'https://powehi.primedata.ai';
+            $host = 'http://powehi.primedata.ai';
         }
         if ($httpClient == null) {
             $httpClient = new HttpClient(
@@ -98,15 +102,23 @@ class Client
      */
     public function sync(Event $msg)
     {
-        $this->httpClient->post("/smile",
+        $body = $msg->jsonSerialize();
+        $body['sendAt'] = Carbon::now()->toIso8601String();
+        $endpoint = self::EventEndpoint;
+        if ($msg->eventName == "sync-user") {
+            $endpoint = self::ContextEndpoint;
+        }
+        $response = $this->httpClient->post(
+            $endpoint,
             [
-                RequestOptions::JSON => $msg->jsonSerialize(),
+                RequestOptions::JSON => $body,
                 'headers'            => [
                     'X-Client-Id'           => $this->sourceID,
                     'X-Client-Access-Token' => $this->writeKey,
                     'User-Agent'            => 'Prime-PHP/0.0.1; (+https://www.primedata.ai/)'
                 ]
             ]);
+        $response->getStatusCode();
     }
 
     private function enqueue(Event $msg)

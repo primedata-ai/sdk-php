@@ -1,11 +1,13 @@
 {
   "name": "primedata-ai/analytics-php",
   "description": "Analytics SDK",
-  "type": "sdk",
+  "version": "0.0.2",
+  "type": "libary",
   "require": {
     "guzzlehttp/psr7": "^1.6",
     "ext-json": "*",
-    "guzzlehttp/guzzle": "^7.0"
+    "guzzlehttp/guzzle": "^7.0",
+    "nesbot/carbon": "^2.37"
   },
   "require-dev": {
     "phpunit/phpunit": "^7.4",

@@ -13,7 +13,7 @@ jobs:
     strategy:
       max-parallel: 6
       matrix:
-        phpVersions: ['7.1', '7.2', '7.3']
+        phpVersions: ['7.2', '7.3']
       fail-fast: false
     name: PHP ${{ matrix.phpVersions }}
     steps:
@@ -27,5 +27,4 @@ jobs:
         run: composer install --no-interaction --no-progress --no-suggest
       - name: Run Linting and Tests
         run: |
-          ./vendor/bin/parallel-lint --exclude vendor .
           ./vendor/bin/phpunit ./tests

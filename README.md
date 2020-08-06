@@ -1,3 +1,5 @@
+![Build Status](https://github.com/primedata-ai/sdk-php/workflows/PHP%20Test/badge.svg)
+
 # Usage
 
 ```php

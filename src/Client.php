@@ -98,7 +98,6 @@ class Client
 
     /**
      * @param Event $msg
-     * @throws GuzzleException
      */
     public function sync(Event $msg)
     {

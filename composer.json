@@ -6,7 +6,7 @@
   "require": {
     "guzzlehttp/psr7": "^1.6",
     "ext-json": "*",
-    "guzzlehttp/guzzle": "^7.0",
+    "guzzlehttp/guzzle": "^6",
     "nesbot/carbon": "^2.37"
   },
   "require-dev": {

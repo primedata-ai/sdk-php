@@ -37,10 +37,7 @@ class Client
      * @param QueueBuffer|null $buffer
      * @param HttpClient|null $httpClient
      */
-    public function __construct(PrimeConfig $config, QueueBuffer $buffer = null,
-                                HttpClient $httpClient = null
-
-    )
+    public function __construct(PrimeConfig $config, QueueBuffer $buffer = null, $httpClient = null)
     {
         $this->config = $config;
         $this->buffer = $buffer;

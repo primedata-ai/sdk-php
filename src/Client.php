@@ -19,14 +19,10 @@ class Client
     private $buffer;
 
     /**
-     * @var string
+     * @var PrimeConfig
      */
-    private $sourceID;
-    /**
-     * @var string
-     */
-    private $writeKey;
 
+    private $config;
     /**
      * @var HttpClient
      */
@@ -37,28 +33,21 @@ class Client
 
     /**
      * Client constructor.
-     * @param string $sourceID
-     * @param string $writeKey
+     * @param PrimeConfig $config
      * @param QueueBuffer|null $buffer
-     * @param string|null $host
      * @param HttpClient|null $httpClient
      */
-    public function __construct(string $sourceID, string $writeKey,
-                                QueueBuffer $buffer = null,
-                                string $host = null,
+    public function __construct(PrimeConfig $config, QueueBuffer $buffer = null,
                                 HttpClient $httpClient = null
+
     )
     {
-        $this->sourceID = $sourceID;
-        $this->writeKey = $writeKey;
+        $this->config = $config;
         $this->buffer = $buffer;
-        if ($host == null or $host == "") {
-            $host = 'http://powehi.primedata.ai';
-        }
         if ($httpClient == null) {
             $httpClient = new HttpClient(
                 [
-                    'base_uri' => $host,
+                    'base_uri' => $config->getHost(),
                     'timeout'  => 1.0
                 ]);
         }
@@ -72,14 +61,14 @@ class Client
      */
     public function track($eventName, $properties, ...$any)
     {
-        $payload = new Event($eventName, $this->sourceID, $properties);
+        $payload = new Event($eventName, $this->config->getSourceID(), $properties);
         foreach ($any as $opt) {
             if (is_callable($opt)) {
                 $opt($payload);
             }
         }
         if ($payload->source == null) {
-            Event::withSource(new Source("s2s", $this->sourceID, []))($payload);
+            Event::withSource(new Source("s2s", $this->config->getSourceID(), []))($payload);
         }
         $this->enqueue($payload);
     }
@@ -91,8 +80,8 @@ class Client
     public function identify($userID, $properties)
     {
         $properties["user_id"] = $userID;
-        $payload = new Event("sync-user", $this->sourceID, $properties);
-        Event::withSource(new Source("s2s", $this->sourceID, []))($payload);
+        $payload = new Event("sync-user", $this->config->getSourceID(), $properties);
+        Event::withSource(new Source("s2s", $this->config->getSourceID(), []))($payload);
         $this->enqueue($payload);
     }
 
@@ -112,8 +101,8 @@ class Client
             [
                 RequestOptions::JSON => $body,
                 'headers'            => [
-                    'X-Client-Id'           => $this->sourceID,
-                    'X-Client-Access-Token' => $this->writeKey,
+                    'X-Client-Id'           => $this->config->getSourceID(),
+                    'X-Client-Access-Token' => $this->config->getWriteKey(),
                     'User-Agent'            => 'Prime-PHP/0.0.1; (+https://www.primedata.ai/)'
                 ]
             ]);

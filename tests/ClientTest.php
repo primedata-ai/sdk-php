@@ -10,6 +10,7 @@ use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Client as HttpClient;
 use Prime\Client;
 use PHPUnit\Framework\TestCase;
+use Prime\PrimeConfig;
 use Prime\QueueBuffer;
 use Prime\Tracking\Event;
 use Prime\Tracking\Source;
@@ -57,7 +58,7 @@ class ClientTest extends TestCase
                 ]], $msg->jsonSerialize());
             return true;
         }));
-        $client = new Client('s-1', 'w-1', $buffer);
+        $client = new Client(new PrimeConfig('s-1', 'w-1'), $buffer);
         $client->identify('paul-id', ['device' => 'Macbook Pro']);
     }
 
@@ -92,7 +93,7 @@ class ClientTest extends TestCase
             ], $msg->jsonSerialize());
             return true;
         }));
-        $client = new Client('s-1', 'w-1', $buffer);
+        $client = new Client(new PrimeConfig('s-1', 'w-1'), $buffer);
         $client->track('access_report', ['in' => 'the morning'],
             Event::withSessionID("s-id"),
             Event::withSource(new Source("site", "primedata.ai", array("price" => 20))),
@@ -128,7 +129,7 @@ class ClientTest extends TestCase
             ]], $msg->jsonSerialize());
             return true;
         }));
-        $client = new Client('s-1', 'w-1', $buffer);
+        $client = new Client(new PrimeConfig('s-1', 'w-1'), $buffer);
         $client->track('access_report', ['in' => 'the morning'],
             Event::withSessionID("s-id"),
             Event::withTarget(new Target("report", "CDP solution", array("pages" => 100)))
@@ -145,7 +146,7 @@ class ClientTest extends TestCase
         $handlerStack = HandlerStack::create($mock);
         $handlerStack->push($history);
 
-        $client = new Client('s-1', 'w-1', null, null, new HttpClient(['handler' => $handlerStack]));
+        $client = new Client(new PrimeConfig('s-1', 'w-1'), null, new HttpClient(['handler' => $handlerStack]));
         $client->track('access_report', ['in' => 'the morning'],
             Event::withSessionID("s-id"),
             Event::withSource(new Source("site", "primedata.ai", array("price" => 20))),

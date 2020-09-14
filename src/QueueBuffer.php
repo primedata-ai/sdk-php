@@ -15,5 +15,5 @@ interface QueueBuffer
      * @param \JsonSerializable $msg
      * @return mixed
      */
-    public function sendMessage(string $topic, object $msg);
+    public function sendMessage(string $topic, \JsonSerializable $msg);
 }

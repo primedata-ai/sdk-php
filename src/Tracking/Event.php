@@ -12,12 +12,34 @@ use Carbon\Carbon;
  */
 class Event extends Payload
 {
+    /**
+     * @var string
+     */
     public $eventName = "";
+    
+    /**
+     * @var string
+     */
     private $sessionId = "";
+
+    /**
+     * @var Payload
+     */
     public $source;
+
+    /**
+     * @var Payload
+     */
     public $target;
+
+    /**
+     * @var string
+     */
     private $scope;
     private $timeStamp;
+    /**
+     * @var
+     */
     private $profileId;
 
     public static function withTarget(Target $target)
@@ -88,5 +110,13 @@ class Event extends Payload
         ];
 
         return $payload;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProfileId()
+    {
+        return $this->profileId;
     }
 }

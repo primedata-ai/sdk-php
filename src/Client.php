@@ -76,9 +76,9 @@ class Client
      */
     public function identify($userID, $properties)
     {
-        $properties["user_id"] = $userID;
         $payload = new Event("sync-user", $this->config->getSourceID(), $properties);
         Event::withSource(new Source("s2s", $this->config->getSourceID(), []))($payload);
+        Event::withProfileID($userID)($payload);
         $this->enqueue($payload);
     }
 

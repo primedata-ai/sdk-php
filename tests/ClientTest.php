@@ -46,13 +46,14 @@ class ClientTest extends TestCase
                         'scope'      => 's-1',
                         'eventType'  => 'sync-user',
                         'itemType'   => 'event',
+                        'profileId'  => 'paul-id',
                         'timeStamp'  => $this->now->toIso8601String(),
                         'source'     => [
                             'scope'    => 's-1',
                             'itemType' => 's2s',
                             'itemId'   => 's-1',
                         ],
-                        'properties' => ['device' => 'Macbook Pro', 'user_id' => 'paul-id'],
+                        'properties' => ['device' => 'Macbook Pro'],
                         'target'     => null,
                     ]
                 ]], $msg->jsonSerialize());
@@ -113,6 +114,7 @@ class ClientTest extends TestCase
                     'scope'      => 's-1',
                     'eventType'  => 'access_report',
                     'itemType'   => 'event',
+                    'profileId'  => 'u-id',
                     'timeStamp'  => $this->now->toIso8601String(),
                     'target'     => [
                         'itemType'   => 'report',
@@ -133,6 +135,7 @@ class ClientTest extends TestCase
         }));
         $client = new Client(new PrimeConfig('s-1', 'w-1'), $buffer);
         $client->track('access_report', ['in' => 'the morning'],
+            Event::withProfileID('u-id'),
             Event::withSessionID("s-id"),
             Event::withTarget(new Target("report", "CDP solution", array("pages" => 100)))
         );
@@ -150,6 +153,7 @@ class ClientTest extends TestCase
 
         $client = new Client(new PrimeConfig('s-1', 'w-1'), null, new HttpClient(['handler' => $handlerStack]));
         $client->track('access_report', ['in' => 'the morning'],
+            Event::withProfileID('u-id'),
             Event::withSessionID("s-id"),
             Event::withSource(new Source("site", "primedata.ai", array("price" => 20))),
             Event::withTarget(new Target("report", "CDP solution", array("pages" => 100)))
@@ -164,6 +168,7 @@ class ClientTest extends TestCase
                     'scope'      => 's-1',
                     'eventType'  => 'access_report',
                     'itemType'   => 'event',
+                    'profileId'  => 'u-id',
                     'timeStamp'  => $this->now->toIso8601String(),
                     'target'     => [
                         'itemType'   => 'report',

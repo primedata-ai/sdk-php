@@ -73,6 +73,7 @@ class ClientTest extends TestCase
                         'scope'      => 's-1',
                         'eventType'  => 'access_report',
                         'itemType'   => 'event',
+                        'profileId'  => 'p-id',
                         'timeStamp'  => $this->now->toIso8601String(),
                         'target'     => [
                             'itemType'   => 'report',
@@ -96,6 +97,7 @@ class ClientTest extends TestCase
         $client = new Client(new PrimeConfig('s-1', 'w-1'), $buffer);
         $client->track('access_report', ['in' => 'the morning'],
             Event::withSessionID("s-id"),
+            Event::withProfileID('p-id'),
             Event::withSource(new Source("site", "primedata.ai", array("price" => 20))),
             Event::withTarget(new Target("report", "CDP solution", array("pages" => 100)))
         );

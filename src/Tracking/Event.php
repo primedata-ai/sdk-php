@@ -18,17 +18,18 @@ class Event extends Payload
     public $target;
     private $scope;
     private $timeStamp;
+    private $profileId;
 
     public static function withTarget(Target $target)
     {
-        return function (event $payload) use ($target) {
+        return function (Event $payload) use ($target) {
             $payload->target = $target;
         };
     }
 
     public static function withSource(Source $source)
     {
-        return function (event $payload) use ($source) {
+        return function (Event $payload) use ($source) {
             $source->scope = $payload->scope;
             $payload->source = $source;
         };
@@ -36,8 +37,15 @@ class Event extends Payload
 
     public static function withSessionID(string $session)
     {
-        return function (event $payload) use ($session) {
+        return function (Event $payload) use ($session) {
             $payload->sessionId = $session;
+        };
+    }
+
+    public static function withProfileID(string $id)
+    {
+        return function (Event $payload) use ($id) {
+            $payload->profileId = $id;
         };
     }
 
@@ -70,6 +78,7 @@ class Event extends Payload
             [
                 'scope'      => $this->scope,
                 'eventType'  => $this->eventName,
+                'profileId'  => $this->profileId,
                 'itemType'   => 'event',
                 'timeStamp'  => $this->timeStamp->toIso8601String(),
                 'properties' => $this->properties,

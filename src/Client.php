@@ -28,8 +28,8 @@ class Client
      */
     private $httpClient;
 
-    const EventEndpoint = "/smile";
-    const ContextEndpoint = "/context";
+    const EventEndpoint = "/s2s/smile";
+    const ContextEndpoint = "/s2s/context";
 
     /**
      * Client constructor.
@@ -89,9 +89,9 @@ class Client
     {
         $body = $msg->jsonSerialize();
         $body['sendAt'] = Carbon::now()->toIso8601String();
-        $endpoint = self::EventEndpoint;
+        $endpoint = Client::EventEndpoint;
         if ($msg->eventName == "sync-user") {
-            $endpoint = self::ContextEndpoint;
+            $endpoint = Client::ContextEndpoint;
         }
         $response = $this->httpClient->post(
             $endpoint,

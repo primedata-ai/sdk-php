@@ -1,7 +1,7 @@
 {
   "name": "primedata-ai/analytics-php",
   "description": "Analytics SDK",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "type": "libary",
   "require": {
     "guzzlehttp/psr7": "^1.6",

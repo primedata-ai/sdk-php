@@ -57,17 +57,17 @@ class Event extends Payload
         };
     }
 
-    public static function withSessionID(string $session)
+    public static function withSessionID($session)
     {
         return function (Event $payload) use ($session) {
-            $payload->sessionId = $session;
+            $payload->sessionId = strval($session);
         };
     }
 
-    public static function withProfileID(string $id)
+    public static function withProfileID($id)
     {
         return function (Event $payload) use ($id) {
-            $payload->profileId = $id;
+            $payload->profileId = strval($id);
         };
     }
 

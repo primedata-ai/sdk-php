@@ -41,26 +41,13 @@ class ClientTest extends TestCase
         $buffer = Mockery::mock(QueueBuffer::class);
         $buffer->shouldReceive('sendMessage')->with('primedata-events', Mockery::on(function (Event $msg) {
             self::assertEquals(
-                ['events' => [
-                    [
-                        'scope'      => 's-1',
-                        'eventType'  => 'sync-user',
-                        'itemType'   => 'event',
-                        'profileId'  => 'paul-id',
-                        'timeStamp'  => $this->now->toIso8601String(),
-                        'source'     => [
-                            'scope'    => 's-1',
-                            'itemType' => 's2s',
-                            'itemId'   => 's-1',
-                        ],
-                        'properties' => ['device' => 'Macbook Pro'],
-                        'target'     => null,
-                    ]
-                ]], $msg->jsonSerialize());
+                new Target('analyticsUser', 'paul-id', ['id' => 'paul-id', 'age' => 30]),
+                $msg->target);
+            self::assertEquals('identify', $msg->eventName);
             return true;
         }));
         $client = new Client(new PrimeConfig('s-1', 'w-1'), $buffer);
-        $client->identify('paul-id', ['device' => 'Macbook Pro']);
+        $client->identify('paul-id', ['age' => 30]);
     }
 
     public function testTrackWithBuffer()

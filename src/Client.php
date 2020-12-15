@@ -5,11 +5,11 @@ namespace Prime;
 
 
 use Carbon\Carbon;
-use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
 use Prime\Tracking\Event;
 use GuzzleHttp\Client as HttpClient;
 use Prime\Tracking\Source;
+use Prime\Tracking\Target;
 
 class Client
 {
@@ -76,9 +76,13 @@ class Client
      */
     public function identify($userID, $properties)
     {
-        $payload = new Event("sync-user", $this->config->getSourceID(), $properties);
+        $payload = new Event("identify", $this->config->getSourceID(), []);
+        if (is_array($properties)) {
+            $properties['id'] = $userID;
+        }
+        $target = new Target("analyticsUser", $userID, $properties);
         Event::withSource(new Source("s2s", $this->config->getSourceID(), []))($payload);
-        Event::withProfileID($userID)($payload);
+        Event::withTarget($target)($payload);
         $this->enqueue($payload);
     }
 
@@ -90,8 +94,9 @@ class Client
         $body = $msg->jsonSerialize();
         $body['sendAt'] = Carbon::now()->toIso8601String();
         $endpoint = Client::EventEndpoint;
-        if ($msg->eventName == "sync-user") {
+        if ($msg->eventName == "identify") {
             $endpoint = Client::ContextEndpoint;
+            $body['source'] = ['itemType' => 's2s', 'itemId' => $this->config->getSourceID(), 'scope' => $this->config->getSourceID()];
         }
         $response = $this->httpClient->post(
             $endpoint,

@@ -16,7 +16,7 @@ class Event extends Payload
      * @var string
      */
     public $eventName = "";
-    
+
     /**
      * @var string
      */

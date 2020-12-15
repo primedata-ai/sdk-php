@@ -44,6 +44,7 @@ class ClientTest extends TestCase
                 new Target('analyticsUser', 'paul-id', ['id' => 'paul-id', 'age' => 30]),
                 $msg->target);
             self::assertEquals('identify', $msg->eventName);
+            self::assertEquals(new Source('s2s', 's-1', []), $msg->source);
             return true;
         }));
         $client = new Client(new PrimeConfig('s-1', 'w-1'), $buffer);

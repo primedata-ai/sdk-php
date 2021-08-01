@@ -28,8 +28,8 @@ class Client
      */
     private $httpClient;
 
-    const EventEndpoint = "/smile";
-    const ContextEndpoint = "/context";
+    const EventEndpoint = "/powehi/smile";
+    const ContextEndpoint = "/powehi/context";
 
     /**
      * Client constructor.

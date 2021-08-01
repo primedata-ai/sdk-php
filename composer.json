@@ -1,7 +1,7 @@
 {
-  "name": "primedata-ai/analytics-php",
+  "name": "primedata-ai/analytics-sdk-php",
   "description": "Analytics SDK",
-  "version": "0.3.8",
+  "version": "0.3.9-alpha",
   "type": "libary",
   "require": {
     "guzzlehttp/psr7": "^1.6",
@@ -28,6 +28,10 @@
     {
       "name": "Paul Aan",
       "email": "paul.ng@primedata.ai"
+    },
+    {
+      "name": "PhongNguyen",
+      "email": "nguyenlephong@primedata.ai"
     }
   ]
 }

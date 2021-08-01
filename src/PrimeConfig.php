@@ -19,7 +19,7 @@ class PrimeConfig
     public function __construct(string $sourceID, string $writeKey, string $host = null)
     {
         if ($host == null or $host == "") {
-            $host = 'http://powehi.primedata.ai';
+            $host = 'https://dev.primedata.ai/powehi';
         }
         $this->host = $host;
         $this->sourceID = $sourceID;
